@@ -69,7 +69,6 @@ opencv-python==4.9.0.80
 openpyxl==3.1.2
 packaging==23.2
 pandas==2.2.1
-pandas-profiling==3.2.0
 patsy==0.5.6
 pdfminer.six==20231228
 pdfplumber==0.11.4
@@ -123,7 +122,6 @@ typing_extensions==4.12.2
 tzdata==2024.1
 urllib3==2.2.1
 virtualenv==20.26.3
-visions==0.7.6
 Werkzeug==3.0.4
 whichcraft==0.6.1
 wordcloud==1.9.3
