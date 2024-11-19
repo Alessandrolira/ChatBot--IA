@@ -69,10 +69,10 @@ def webhook():
 
             tema = categorizarPergunta(mensagem)
 
-            if tema in ['beneficiario', 'beneficiarios']:
+            if tema in ['beneficiario', 'beneficiarios', 'Beneficiário', 'Beneficiários']:
                 consultaSQL = buscarBeneficiarios(mensagem)
                 prompt_sistema = formatarDadosParaTexto(consultaSQL)
-            elif tema == 'rede':
+            elif tema == 'rede' or tema == 'Rede':
                 consultaSQL = buscarRede(mensagem)
                 prompt_sistema = formatarDadosParaTextoRede(consultaSQL)
             elif tema == 'plano':
@@ -84,13 +84,13 @@ def webhook():
                     print(consultaSQL)
                     prompt_sistema = formatarDadosParaTextoRede(consultaSQL)
                 except:
-                     prompt_sistema = """Para realizar essa busca é necessário que possuam três parametros:
-                     1. nome do beneficiario
-                     2. especialidade buscada
-                     3. municipio
+                    prompt_sistema = """Para realizar essa busca é necessário que possuam três parametros:
+                    1. nome do beneficiario
+                    2. especialidade buscada
+                    3. municipio
                     
-                     Atente-se para escrever o nome correto das informações
-                     """
+                    Atente-se para escrever o nome correto das informações
+                    """
             else:
                 prompt_sistema = "Desconhecido"
 
@@ -110,7 +110,7 @@ def webhook():
 def enviarMensagem(to, message):
     url = 'https://graph.facebook.com/v20.0/477055852149378/messages'
     headers = {
-        'Authorization': 'Bearer EAAO6yVjpe0sBOxZBliMk2gqAMjRbvX5QF119Cj3rZBV6VPmZBLF1ZAWpiZBhAPnWpgYpMuIZBMOJwYU40ziFtVznLtzUeytFMWvEJkI7jvy74loTxlu7m4bpUFq2HudeQ9y5GzcVr3IPufCzjnsqdnYm5ddOnLUNDt1KzUK7xc86ZAlhY1T4ZBMVcfRzxSVxpgxsmMvFajVaWcWb1HxMMqoeMtQwUnEZD',  # Substitua pelo seu token de acesso
+        'Authorization': 'Bearer EAAO6yVjpe0sBOZCiIPJ59jAyYfgmBSB8nD3lm4hYtd6xZBaZCmg2gYO73fo8cYESFeP2l04yQfE9d6fSBLHmHNB0SZBfILDVNujE8ZA41KRo9vhrpO5xzZCltgDmHbeNnu1mSD0nhrSPzZB8qI70GVYQZA05NRgrJPgvQxZCH3J8Qybl2na4TbdbE5SSXVzt9w22i4oC4D3SKFGR0Pwt3TQmR36HvbULK',  # Substitua pelo seu token de acesso
         'Content-Type': 'application/json'
     }
     payload = {
@@ -188,16 +188,16 @@ def gerarRepostaChatGPT4SemHistórico(contexto, pergunta):
 
 def categorizarPergunta(pergunta):
     contexto = f"""
-    Analise a seguinte pergunta: "{pergunta}". Categorize o tema da pergunta com base nas seguintes regras:
+    Analise a seguinte pergunta: "{pergunta}". Categorize o tema da pergunta de acordo com as seguintes regras:
 
-    1. Se a pergunta menciona o nome de uma pessoa, o tema é 'Beneficiário' (irá buscar na tabela de movimentações) lembre se quiser saber informações de algum beneficiario será categorizado aqui.
-    2. Se a pergunta menciona algo sobre rede de atendimento, o tema é 'Rede' (irá buscar na tabela de redeAmil).
-    3. Se a pergunta menciona planos ou valores de planos, o tema é 'Plano' (irá buscar na tabela de planos).
-    4. Se na pergunta está querendo saber de rede credenciada que um beneficiario possui, o tema é 'BuscaRedeBeneficiário' (irá entegrar a busca de beneficiario e rede)
+    1. Se a pergunta menciona o nome de uma pessoa, classifique como 'Beneficiário' (busque na tabela de movimentações). Qualquer pergunta sobre informações de um beneficiário se enquadra aqui.
+    2. Se a pergunta fala sobre rede de atendimento, classifique como 'Rede' (busque na tabela de redeAmil).
+    3. Se a pergunta se refere a planos ou valores de planos, classifique como 'Plano' (busque na tabela de planos).
+    4. Se a pergunta busca informações sobre a rede credenciada de um beneficiário específico, classifique como 'BuscaRedeBeneficiário' (integre a busca de beneficiário e rede).
 
-    responda apenas com uma das seguintes opções: beneficiarios, rede, plano, BuscaRedeBeneficiário. lembre-se que quando a pergunta for para saber algum status do plano está falando do Beneficiário, mas caso a pergunta cite algo para encontrar hospital para uma pessoa especifica sera BuscaRedeBeneficiário.
-    
-    Escreva somente o tema com uma palavra
+    Responda apenas com uma das seguintes palavras: beneficiarios, rede, plano, BuscaRedeBeneficiário. Lembre-se de que, ao perguntar sobre o status do plano, o foco é no beneficiário, mas se a pergunta busca encontrar um hospital para uma pessoa específica, será classificada como BuscaRedeBeneficiário.
+
+    Forneça somente o tema em uma palavra.
     """
 
     tema = gerarRepostaChatGPT4SemHistórico(contexto, pergunta)
@@ -265,7 +265,7 @@ def buscarBeneficiarios(mensagem):
 def buscarRede(mensagem):
     # Implementar lógica para buscar na tabela de rede
     contexto_especialidade = f"""
-        Dentro dessa mensagem: "{mensagem}", identifique a especialidade buscada. Lembre-se de escrever apenas o nome da especialidade informada sem pontuação. Pode acontecer da especialidade não ser informada, caso isso aconteça informe "sem especialidade"
+        Dentro dessa mensagem: "{mensagem}", identifique a especialidade buscada. Lembre-se de escrever apenas o nome da especialidade informada sem pontuação. Pode acontecer da especialidade não ser informada, caso isso aconteça informe "sem especialidade" maternidade ou maternidades é uma especialidade.
     """
     
     especialidade = gerarRepostaChatGPTSemHistórico(contexto_especialidade, mensagem)
